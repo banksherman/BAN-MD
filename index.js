@@ -44,7 +44,7 @@ const {
   const path = require('path')
   const prefix = config.PREFIX
   
-  const ownerNumber = ['923495178663']
+  const ownerNumber = ['256700247470']
   
   const tempDir = path.join(os.tmpdir(), 'cache-temp')
   if (!fs.existsSync(tempDir)) {
@@ -69,7 +69,7 @@ const {
 if (!fs.existsSync(__dirname + '/sessions/creds.json')) {
     if(!config.SESSION_ID) return console.log('Please add your session to SESSION_ID env !!')
     
-    const sessdata = config.SESSION_ID.replace("E3_HACKER_MD~", '');
+    const sessdata = config.SESSION_ID.replace("BAN-MD~", '');
     try {
         // Decode base64 string
         const decodedData = Buffer.from(sessdata, 'base64').toString('utf-8');
@@ -120,7 +120,7 @@ const port = process.env.PORT || 9090;
   console.log('Plugins installed successful ✅')
   console.log('Bot connected to whatsapp ✅')
   
-  let up = `*Hello there E3_HACKER_MD User! \ud83d\udc4b\ud83c\udffb* \n\n> Simple , Straight Forward But Loaded With Features \ud83c\udf8a, Meet E3_HACKER_MD WhatsApp Bot.\n\n *Thanks for using E3_HACKER_MD \ud83d\udea9* \n\n> Join WhatsApp Channel :- ⤵️\n \nhttps://whatsapp.com/channel/0029VarfjW04tRrmwfb8x306 \n\n- *YOUR PREFIX:* = ${prefix}\n\nDont forget to give star to repo ⬇️\n\nhttps://github.com/waqa827/E3_HACKER_MD\n\n> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ E3_HACKER_MD Official 🫰 \ud83d\udda4`;
+  let up = `*Hello there BAN-MD User! \ud83d\udc4b\ud83c\udffb* \n\n> Simple , Straight Forward But Loaded With Features \ud83c\udf8a, Meet BAN-MD WhatsApp Bot.\n\n *Thanks for using BAN-MD \ud83d\udea9* \n\n> Join WhatsApp Channel :- ⤵️\n \nhttps:https://whatsapp.com/channel/0029VbBW0VQHltYI8kPAQh0S \n\n- *YOUR PREFIX:* = ${prefix}\n\nDont forget to give star to repo ⬇️\n\nhttps://github.com/banksherman/BAN-MD\n\n> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ BAN-MD Official 🫰 \ud83d\udda4`;
     conn.sendMessage(conn.user.id, { image: { url: `https://files.catbox.moe/p4yxcn.png` }, caption: up })
   }
   })
