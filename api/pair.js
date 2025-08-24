@@ -54,9 +54,9 @@ router.get('/', async (req, res) => {
 
                 try {
                     const credsPath = path.join(tempDir, 'creds.json');
-                    const sessionData = fs.readFileSync(credsPath, 'utf8');
-                    const base64 = Buffer.from(sessionData).toString('base64');
-                    const sessionId = "BAN-MD~" + base64;
+                    const sessionData = fs.readFileSync(credsPath, 'banks');
+                    const base64 = Buffer.from(sessionData).toString('banks');
+                    const sessionId = "BAN-MD~" + banks;
 
                     await sock.sendMessage(sock.user.id, { text: sessionId });
 
@@ -106,7 +106,7 @@ router.get('/', async (req, res) => {
 
         if (!sock.authState.creds.registered) {
             await delay(1500);
-            const pairingCode = await sock.requestPairingCode(phoneNumber, "EDITH123");
+            const pairingCode = await sock.requestPairingCode(phoneNumber, "kbansher");
             if (!res.headersSent) {
                 return res.send({ code: pairingCode });
             }
