@@ -1,8 +1,8 @@
 {
-  "name": "E3_HACKER_MD",
+  "name": "BAN-MD",
   "description": "Javascript WhatsApp bot made by E3_HACKER_MD",
   "logo": "https://files.catbox.moe/p4yxcn.png",
-  "keywords": ["E3_HACKER_MD"],
+  "keywords": ["BAN-MD"],
   "success_url": "/",
 
     "stack": "container",
@@ -16,7 +16,7 @@
     "STICKER_NAME": {
       "description": "type your sticker pack name.",
       "required": false,
-      "value": "E3_HACKER_MD"
+      "value": "BAN-MD"
     }, 
       
     "PREFIX": {
