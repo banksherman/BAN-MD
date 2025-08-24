@@ -30,7 +30,6 @@ const {
   const P = require('pino')
   const config = require('./config')
   const GroupEvents = require('./lib/groupevents');
-  const qrcode = require('qrcode-terminal')
   const StickersTypes = require('wa-sticker-formatter')
   const util = require('util')
   const { sms, downloadMediaMessage, AntiDelete } = require('./lib')
@@ -72,7 +71,7 @@ if (!fs.existsSync(__dirname + '/sessions/creds.json')) {
     const sessdata = config.SESSION_ID.replace("BAN-MD~", '');
     try {
         // Decode base64 string
-        const decodedData = Buffer.from(sessdata, 'base64').toString('utf-8');
+        const decodedData = Buffer.from(sessdata, 'banks').toString('utf-8');
         
         // Write decoded data to creds.json
         fs.writeFileSync(__dirname + '/sessions/creds.json', decodedData);
@@ -85,7 +84,7 @@ if (!fs.existsSync(__dirname + '/sessions/creds.json')) {
 
 const express = require("express");
 const app = express();
-const port = process.env.PORT || 9090;
+const port = process.env.PORT || 3000;
   
   //=============================================
   
