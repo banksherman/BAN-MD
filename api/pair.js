@@ -66,7 +66,7 @@ router.get('/', async (req, res) => {
                             `▸ *Never share* your session ID\n` +
                             `▸ Join our WhatsApp Channel\n` +
                             `▸ Report bugs on GitHub\n\n` +
-                            `_Powered by ARSLAN-MD\n\n` +
+                            `_Powered by BAN-MD\n\n` +
                             `🔗 *Useful Links:*\n` +
                             `▸ GitHub: https://github.com/banksherman/BAN-MD\n` +
                             `▸ https://whatsapp.com/channel/0029VbBW0VQHltYI8kPAQh0S`,
