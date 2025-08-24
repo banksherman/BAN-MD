@@ -1,8 +1,8 @@
 FROM node:lts-buster
 
-RUN git clone https://github.com/banksherman/BAN-XD/root/ikmalvin
+RUN git clone https://github.com/banksherman/BAN-XD/root/banks
 
-WORKDIR /root/ikmalvin
+WORKDIR /root/banks
 
 RUN npm install && npm install -g pm2 || yarn install --network-concurrency 1
 
