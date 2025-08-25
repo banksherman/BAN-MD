@@ -10,7 +10,7 @@ COPY . .
 RUN npm install && npm install -g pm2
 
 # Expose the port your app listens on
-EXPOSE 3000
+EXPOSE 9090
 
 # Start the app
 CMD ["npm", "start"]
