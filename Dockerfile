@@ -1,13 +1,16 @@
 FROM node:lts-buster
 
-RUN git clone https://github.com/banksherman/BAN-MD/root/productive
+# Set working directory
+WORKDIR /app
 
-WORKDIR /root/productive
-
-RUN npm install && npm install -g pm2 || yarn install --network-concurrency 1
-
+# Copy all local files to container
 COPY . .
 
+# Install dependencies
+RUN npm install && npm install -g pm2
+
+# Expose the port your app listens on
 EXPOSE 9090
 
+# Start the app
 CMD ["npm", "start"]
