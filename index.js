@@ -71,7 +71,7 @@ if (!fs.existsSync(__dirname + '/sessions/creds.json')) {
     const sessdata = config.SESSION_ID.replace("BAN-MD~", '');
     try {
         // Decode base64 string
-        const decodedData = Buffer.from(sessdata, 'BAN-MD').toString('utf-8');
+        const decodedData = Buffer.from(sessdata, '').toString('utf-8');
         
         // Write decoded data to creds.json
         fs.writeFileSync(__dirname + '/sessions/creds.json', decodedData);
