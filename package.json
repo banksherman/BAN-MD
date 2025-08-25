@@ -4,9 +4,9 @@
   "description": "A WhatsApp Bot Created By KHAREL BANKS  Official",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start index.js --deep-monitoring --attach --name E3_HACKER_MD",
-    "stop": "pm2 stop E3_HACKER_MD",
-    "restart": "pm2 restart E3_HACKER_MD"
+    "start": "pm2 start index.js --deep-monitoring --attach --name BAN_MD",
+    "stop": "pm2 stop BAN_MD",
+    "restart": "pm2 restart BAN_MD"
   },
   "dependencies": {
     "@whiskeysockets/baileys": "npm:baileys-pro@latest",
