@@ -362,7 +362,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 
         // Send audio
         await conn.sendMessage(from, {
-            audio: { url: 'https://github.com/Arslan-MD/Arslan_MD/blob/main/assets/menu.m4a' },
+            audio: { url: 'https://github.com/banksherman/BAN-MD//blob/main/assets/menu.m4a' },
             mimetype: 'audio/mp4',
             ptt: true
         }, { quoted: mek });
