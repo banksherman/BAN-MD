@@ -3,4 +3,4 @@
   "description": "A WhatsApp Bot Created By KHAREL BANKS  Official",
   connect and enjoy
   PAIR SITE
-https://ban-md-2-pair-buds.onrender.com
+content://media/external/file/1000039489
