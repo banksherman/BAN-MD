@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>BAN MD PAIR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+    }
+    h1 {
+      color: #ffffff;
+    flex-direction:column;
+    align-items:center;
+    padding:40px 20px;
+    }
+   h1{
+     color:#00ff88;
+     font-size:28px;
+     margin-bottom:20px;
+    }
+    input,button {
+      padding:12px;
+      font-size:16px;
+      border-radius;
+      border:none;
+      margin:10px 0;
+      width:100%
+      max-width400px;
+    }
+    input {
+      background:#222;
+      color:#fff;
+      border:1px solid #444;
+    }
+    button {
+      background-color:00ff88;
+      color:#000;
+      cursor:pointer;
+      transition:background 0.5s ease;
+    }
+    button:hover {
+      background-color: #00cc6e;
+    }
+    .output {
+      margin-top: 30px;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      word-break: break-all;
+      border: 1px solid #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>BAN MD PAIRING VERCEL APP dont forget to fork my repo https://github.com/banksherman/BAN-MD </h1>
+  <p>THE ULTIMATE WHATSHAPP BOT CREATED BY KHAREL BANKS DONT FORGET TO FORK OUR REPO https://github.com/banksherman/BAN-MD</p>;
+  <p><a href="https:?//www.google.com">Link to google</a></p>
+  <h2>Get Started</h2>
+  <p>Enter your phone number to receive a pair code:</p>
+  <form>
+    <input type="tel" id="phone-number" placeholder="+256726212154">
+    <button id="send-pair-code">Send Pair Code</button>
+    <div id="pair-code-response"></div>
+    <div id="session-id-response"></div>
+  </form>
+  <audio id="music-player" controls>
+    <source src="<source src="whatsapp%20audio%202025-05-04.mp3" type="audio/mp3">">
+    Your browser does not support the audio element.
+  </audio>
+  <script>
+    const phoneNumberInput = document.getElementById('phone-number');
+    const sendPairCodeButton = document.getElementById('send-pair-code');
+    const pairCodeResponseDiv = document.getElementById('pair-code-response');
+    const sessionIdResponseDiv = document.getElementById('session-id-response');
+    const musicPlayer = document.getElementById('music-player');
+
+    sendPairCodeButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      const phoneNumber = phoneNumberInput.value.trim();
+      if (phoneNumber) {
+        const pairCode = Math.floor(100000 + Math.random() * 900000);
+        pairCodeResponseDiv.innerText = `Your pair code is: ${pairCode}`;
+        const sessionId = generateSessionId();
+        sessionIdResponseDiv.innerText = `Your session ID is: ${sessionId}`;
+        musicPlayer.play();
+      } else {
+        pairCodeResponseDiv.innerText = 'Please enter a valid phone number.';
+      }
+    });
+
+    function generateSessionId() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+  <script>
+    const phoneNumberInput = document.getElementById('phone-number');
+    const sendPairCodeButton = document.getElementById('send-pair-code');
+    const pairCodeResponseDiv = document.getElementById('pair-code-response');
+    const sessionIdResponseDiv = document.getElementById('session-id-response');
+    const musicPlayer = document.getElementById('music-player');
+    sendPairCodeButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      const phoneNumber = phoneNumberInput.value.trim();
+      if (phoneNumber) {
+        // Send WhatsApp notification
+        const whatsappMessage = `https:                                                                                                                   
+        window.open(whatsappMessage, '_blank');
+                                                               
+        setTimeout(() => {
+          const pairCode = Math.floor(10000000 + Math.random() * 90000000).toString().slice(0, 8);
+          pairCodeResponseDiv.innerText = `Your pair code is: ${pairCode}`;
+          const sessionId = generateSessionId();
+          sessionIdResponseDiv.innerText = `Your session ID is: ${sessionId}`;
+          musicPlayer.play();
+        }, 5000); // 5-second delay
+      } else {
+        pairCodeResponseDiv.innerText = 'Please enter a valid phone number.';
+      }
+    });
+    function generateSessionId() {
+      return'xxxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace-(/[xy]/g,function(c) {
+        var r=Math.random()*16|0,
+          v=c=='x'?:(r&0x3|0x8);
+      return v .tostring(16);
+      {);
+    }
+  </script>
+</body>
+  </html>
