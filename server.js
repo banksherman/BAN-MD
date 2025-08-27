@@ -94,4 +94,17 @@ function sendSessionIdToWhatsApp(phone, sessionId) {
   // Assuming you have Baileys or another WhatsApp API set up to send the message
   axios.post('https://your-whatsapp-bot-endpoint/send-message', {
     phone: phone,
-    message: `✅ Your device has been paired successfully. Your session ID is: ${sessionId
+    message: `✅ Your device has been paired successfully. Your session ID is: ${sessionId}`
+  })
+  .then(response => {
+    console.log(`Session ID sent to ${phone}`);
+  })
+  .catch(error => {
+    console.error('Error sending session ID to WhatsApp:', error);
+  });
+}
+
+// Start the Express server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
