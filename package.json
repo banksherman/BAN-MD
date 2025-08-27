@@ -1,12 +1,10 @@
 {
-  "name": "BAN-MD",
-  "version": "4.5.0",
-  "description": "A WhatsApp Bot Created By KHAREL BANKS  Official",
-  "main": "index.js",
+  "name": "pairing-app",
+  "version": "1.0.0",
+  "description": "CTRATED BY KHAREL OFC 2025",
+  "main": "server.js",
   "scripts": {
-    "start": "pm2 start index.js --deep-monitoring --attach --name BAN_MD",
-    "stop": "pm2 stop BAN_MD",
-    "restart": "pm2 restart BAN_MD"
+    "start": "node server.js"
   },
   "dependencies": {
     "@whiskeysockets/baileys": "npm:baileys-pro@latest",
