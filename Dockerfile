@@ -7,7 +7,8 @@ WORKDIR /app
 COPY . .
 
 # Install dependencies
-RUN npm install && npm install -g pm2
+RUN npm install && npm install -g pm2 && npm install twilio
+
 
 # Expose the port your app listens on
 EXPOSE 9090
