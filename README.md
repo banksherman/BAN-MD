@@ -7,5 +7,4 @@ content://media/external/file/1000039489
 https://app.netlify.com/projects/mellow-jalebi-82688e/deploys/68ad9716c01d4786e4576373
 
 click on link 
-scroll down and finally click download 
-after open file to get pair code and session 
+https://pairing-app-ut40.onrender.com
