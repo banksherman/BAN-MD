@@ -1,133 +1,53 @@
-const {
-  default: makeWASocket,
-    useMultiFileAuthState,
-    DisconnectReason,
-    jidNormalizedUser,
-    isJidBroadcast,
-    getContentType,
-    proto,
-    generateWAMessageContent,
-    generateWAMessage,
-    AnyMessageContent,
-    prepareWAMessageMedia,
-    areJidsSameUser,
-    downloadContentFromMessage,
-    MessageRetryMap,
-    generateForwardMessageContent,
-    generateWAMessageFromContent,
-    generateMessageID, makeInMemoryStore,
-    jidDecode,
-    fetchLatestBaileysVersion,
-    Browsers
-  } = require('@whiskeysockets/baileys')
-  
-  
-  const l = console.log
-  const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('./lib/functions')
-  const { AntiDelDB, initializeAntiDeleteSettings, setAnti, getAnti, getAllAntiDeleteSettings, saveContact, loadMessage, getName, getChatSummary, saveGroupMetadata, getGroupMetadata, saveMessageCount, getInactiveGroupMembers, getGroupMembersMessageCount, saveMessage } = require('./data')
-  const fs = require('fs')
-  const ff = require('fluent-ffmpeg')
-  const P = require('pino')
-  const config = require('./config')
-  const GroupEvents = require('./lib/groupevents');
-  const StickersTypes = require('wa-sticker-formatter')
-  const util = require('util')
-  const { sms, downloadMediaMessage, AntiDelete } = require('./lib')
-  const FileType = require('file-type');
-  const axios = require('axios')
-  const { File } = require('megajs')
-  const { fromBuffer } = require('file-type')
-  const bodyparser = require('body-parser')
-  const os = require('os')
-  const Crypto = require('crypto')
-  const path = require('path')
-  const prefix = config.PREFIX
-  
-  const ownerNumber = ['256700247470']
-  
-  const tempDir = path.join(os.tmpdir(), 'cache-temp')
-  if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir)
-  }
-  
-  const clearTempDir = () => {
-      fs.readdir(tempDir, (err, files) => {
-          if (err) throw err;
-          for (const file of files) {
-              fs.unlink(path.join(tempDir, file), err => {
-                  if (err) throw err;
-              });
-          }
-      });
-  }
-  
-  // Clear the temp directory every 5 minutes
-  setInterval(clearTempDir, 5 * 60 * 1000);
-  
-  //===================SESSION-AUTH============================
-if (!fs.existsSync(__dirname + '/sessions/creds.json')) {
-    if(!config.SESSION_ID) return console.log('Please add your session to SESSION_ID env !!')
-    
-    const sessdata = config.SESSION_ID.replace("BAN-MD~", '');
-    try {
-        // Decode base64 string
-        const decodedData = Buffer.from(sessdata, '').toString('utf-8');
-        
-        // Write decoded data to creds.json
-        fs.writeFileSync(__dirname + '/sessions/creds.json', decodedData);
-        console.log("Session loaded ✅");
-    } catch (err) {
-        console.error("Error decoding session data:", err);
-        throw err;
-    }
-}
+const { default: makeWASocket, useMultiFileAuthState } = require('@whiskeysockets/baileys');
+const axios = require('axios');
 
-const express = require("express");
-const app = express();
-const port = process.env.PORT || 9090;
-  
-  //=============================================
-  
-  async function connectToWA() {
-  console.log("Connecting to WhatsApp ⏳️...");
-  const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/sessions/')
-  var { version } = await fetchLatestBaileysVersion()
-  
-  const conn = makeWASocket({
-          logger: P({ level: 'silent' }),
-          printQRInTerminal: false,
-          browser: Browsers.macOS("Firefox"),
-          syncFullHistory: true,
-          auth: state,
-          version
-          })
-      
-  conn.ev.on('connection.update', (update) => {
-  const { connection, lastDisconnect } = update
-  if (connection === 'close') {
-  if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
-  connectToWA()
-  }
-  } else if (connection === 'open') {
-  console.log('🧬 Installing Plugins')
-  const path = require('path');
-  fs.readdirSync("./plugins/").forEach((plugin) => {
-  if (path.extname(plugin).toLowerCase() == ".js") {
-  require("./plugins/" + plugin);
-  }
+async function startBot() {
+  const { state, saveCreds } = await useMultiFileAuthState('auth'); // auth folder to store session
+
+  const sock = makeWASocket({
+    auth: state,
+    printQRInTerminal: true, // QR code for WhatsApp Web login
   });
-  console.log('Plugins installed successful ✅')
-  console.log('Bot connected to whatsapp ✅')
-  
-  let up = `*Hello there BAN-MD User! \ud83d\udc4b\ud83c\udffb* \n\n> Simple , Straight Forward But Loaded With Features \ud83c\udf8a, Meet BAN-MD WhatsApp Bot.\n\n *Thanks for using BAN-MD \ud83d\udea9* \n\n> Join WhatsApp Channel :- ⤵️\n \nhttps:https://whatsapp.com/channel/0029VbBW0VQHltYI8kPAQh0S \n\n- *YOUR PREFIX:* = ${prefix}\n\nDont forget to give star to repo ⬇️\n\nhttps://github.com/banksherman/BAN-MD\n\n> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ BAN-MD Official 🫰 \ud83d\udda4`;
-    conn.sendMessage(conn.user.id, { image: { url: `https://files.catbox.moe/p4yxcn.png` }, caption: up })
-  }
-  })
-  conn.ev.on('creds.update', saveCreds)
 
-  //==============================
+  sock.ev.on('creds.update', saveCreds); // Save credentials when updated
 
-  conn.ev.on('messages.update', async updates => {
+  // 🧠 Main message handler
+  sock.ev.on('messages.upsert', async ({ messages }) => {
+    const msg = messages[0];
+    if (!msg.message) return;  // Skip if no message
+
+    const sender = msg.key.remoteJid; // This is the user's WhatsApp ID (JID)
+    const text = msg.message.conversation || msg.message.extendedTextMessage?.text || "";
+
+    // Look for the 'PAIR <code>' message
+    if (text.startsWith("PAIR ")) {
+      const code = text.split(" ")[1]?.trim();  // Extract pair code from the message
+
+      try {
+        // Send the pair code to your backend to validate and get session ID
+        const res = await axios.post(`https://pairing-app-ut40.onrender.com/whatsapp/callback`, {
+          code,
+          jid: sender,  // Send the user's WhatsApp ID (JID) to the backend
+        });
+
+        const sessionId = res.data.sessionId; // Get the session ID from backend
+
+        // Send session ID back to the user
+        await sock.sendMessage(sender, {
+          text: `✅ You are now paired! Your session ID is:\n${sessionId}`,
+        });
+      } catch (err) {
+        console.error(err.message);
+        // Handle invalid pair code
+        await sock.sendMessage(sender, {
+          text: `❌ Invalid or expired pair code. Please try again.`,
+        });
+      }
+    }
+  });
+
+  // You can add more message handle let up = `*Hello there BAN-MD User! \ud83d\udc4b\ud83c\udffb* \n\n> Simple , Straight Forward But Loaded With Features \ud83c\udf8a, Meet BAN-MD WhatsApp Bot.\n\n *Thanks for using BAN-MD \ud83d\udea9* \n\n> Join WhatsApp Channel :- ⤵️\n \nhttps:https://whatsapp.com/channel/0029VbBW0VQHltYI8kPAQh0S \n\n- *YOUR PREFIX:* = ${prefix}\n\nDont forget to give star to repo ⬇️\n\nhttps://github.com/banksherman/BAN-MD\n\n> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ BAN-MD Official 🫰 \ud83d\udda4`;
+    conn.sendMessage(conn.user.id, { image: { url: `https://files.catbox.moe/p4yxcn.png` }, caption: up })conn.ev.on('messages.update', async updates => {
     for (const update of updates) {
       if (update.update.message === null) {
         console.log("Delete Detected:", JSON.stringify(update, null, 2));
@@ -775,9 +695,18 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
   }
   
   app.get("/", (req, res) => {
-  res.send("E3_HACKER_MD STARTED ✅");
+  res.send("BAN MD STARTED ✅");
   });
   app.listen(port, () => console.log(`Server listening on port http://localhost:${port}`));
   setTimeout(() => {
   connectToWA()
   }, 4000);
+
+	
+  }rs here if needed
+}
+
+startBot();
+
+ 
+  
