@@ -61,34 +61,4 @@ function sendPairCodeToWhatsApp(phone, pairCode) {
 }
 
 // ✅ Simulated WhatsApp Bot callback (in real case, from webhook or bot)
-app.get('/whatsapp/callback/:pairCode', (req, res) => {
-  const { pairCode } = req.params;
-  const pairing = pairings[pairCode];
-
-  if (!pairing) {
-    return res.status(404).json({ error: 'Invalid pair code' });
-  }
-
-  if (pairing.paired) {
-    return res.status(400).json({ error: 'Code already used' });
-  }
-
-  // Mark as paired
-  pairing.paired = true;
-
-  // Log sending session ID to WhatsApp (to notify user)
-  console.log(`✅ Sending session ID to ${pairing.phone}: ${pairing.sessionId}`);
-
-  // Send session ID back to WhatsApp
-  sendSessionIdToWhatsApp(pairing.phone, pairing.sessionId);
-
-  // Return the session ID in response
-  res.json({
-    message: `Paired with phone ${pairing.phone}`,
-    sessionId: pairing.sessionId
-  });
-});
-
-// Function to send session ID to the user's WhatsApp after pairing
-function sendSessionIdToWhatsApp(phone, sessionId) {
-  // Assuming you have Baileys or another WhatsApp API set up to send the message
+app.get('/whatsapp/callback/:pairC
