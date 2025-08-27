@@ -19,6 +19,34 @@ app.use(session({
 // In-memory store for simplicity (use a DB in production)
 const pairings = {};
 
+// Function to send pair code to the user's WhatsApp via Baileys bot
+function sendPairCodeToWhatsApp(phone, pairCode) {
+  axios.post('https://your-whatsapp-bot-endpoint/send-message', {
+    phone: phone, // Make sure phone is in international format
+    message: `🔐 Your pairing code is: ${pairCode}\n\nPlease send this code back to complete the pairing process.`
+  })
+  .then(response => {
+    console.log(`Pair code sent to ${phone}`);
+  })
+  .catch(error => {
+    console.error('Error sending pair code to WhatsApp:', error);
+  });
+}
+
+// Function to send session ID to the user's WhatsApp after pairing
+function sendSessionIdToWhatsApp(phone, sessionId) {
+  axios.post('https://your-whatsapp-bot-endpoint/send-message', {
+    phone: phone, // Make sure phone is in international format
+    message: `✅ Your device has been paired successfully!\n\nYour session ID is: ${sessionId}\nPlease use this ID to authenticate future requests.`
+  })
+  .then(response => {
+    console.log(`Session ID sent to ${phone}`);
+  })
+  .catch(error => {
+    console.error('Error sending session ID to WhatsApp:', error);
+  });
+}
+
 // POST route to handle pairing requests and send pair code to WhatsApp
 app.post('/pair', (req, res) => {
   const { phone } = req.body;
@@ -44,21 +72,6 @@ app.post('/pair', (req, res) => {
     <p>Scan QR or send this code via WhatsApp to our bot.</p>
   `);
 });
-
-// Function to send pair code to the user's WhatsApp via Baileys bot
-function sendPairCodeToWhatsApp(phone, pairCode) {
-  // Assuming you have Baileys or another WhatsApp API set up to send the message
-  axios.post('https://your-whatsapp-bot-endpoint/send-message', {
-    phone: phone,
-    message: `Your pairing code is: ${pairCode}`
-  })
-  .then(response => {
-    console.log(`Pair code sent to ${phone}`);
-  })
-  .catch(error => {
-    console.error('Error sending pair code to WhatsApp:', error);
-  });
-}
 
 // ✅ Simulated WhatsApp Bot callback (in real case, from webhook or bot)
 app.get('/whatsapp/callback/:pairCode', (req, res) => {
@@ -89,22 +102,7 @@ app.get('/whatsapp/callback/:pairCode', (req, res) => {
   });
 });
 
-// Function to send session ID to the user's WhatsApp after pairing
-function sendSessionIdToWhatsApp(phone, sessionId) {
-  // Assuming you have Baileys or another WhatsApp API set up to send the message
-  axios.post('https://your-whatsapp-bot-endpoint/send-message', {
-    phone: phone,
-    message: `✅ Your device has been paired successfully. Your session ID is: ${sessionId}`
-  })
-  .then(response => {
-    console.log(`Session ID sent to ${phone}`);
-  })
-  .catch(error => {
-    console.error('Error sending session ID to WhatsApp:', error);
-  });
-}
-
-// Start the Express server
+// Start the server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
