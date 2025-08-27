@@ -2,10 +2,17 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
-const axios = require('axios'); // For making HTTP requests to WhatsApp bot
+const twilio = require('twilio'); // Twilio package to send messages
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Twilio credentials (use environment variables for security in production)
+const ACCOUNT_SID = 'AC3e71cf33c152e10187637ef5bc0284c7';  // Your Twilio Account SID
+const AUTH_TOKEN = 'b7f18ae12453ed9332563c21f4b5397e';  // Your Twilio Auth Token
+const TWILIO_WHATSAPP_NUMBER = 'whatsapp:+15315354361';  // Your Twilio WhatsApp-enabled number
+
+const client = twilio(ACCOUNT_SID, AUTH_TOKEN); // Initialize Twilio client
 
 // Middleware
 app.use(express.static('public'));
@@ -18,34 +25,6 @@ app.use(session({
 
 // In-memory store for simplicity (use a DB in production)
 const pairings = {};
-
-// Function to send pair code to the user's WhatsApp via Baileys bot
-function sendPairCodeToWhatsApp(phone, pairCode) {
-  axios.post('https://your-whatsapp-bot-endpoint/send-message', {
-    phone: phone, // Make sure phone is in international format
-    message: `🔐 Your pairing code is: ${pairCode}\n\nPlease send this code back to complete the pairing process.`
-  })
-  .then(response => {
-    console.log(`Pair code sent to ${phone}`);
-  })
-  .catch(error => {
-    console.error('Error sending pair code to WhatsApp:', error);
-  });
-}
-
-// Function to send session ID to the user's WhatsApp after pairing
-function sendSessionIdToWhatsApp(phone, sessionId) {
-  axios.post('https://your-whatsapp-bot-endpoint/send-message', {
-    phone: phone, // Make sure phone is in international format
-    message: `✅ Your device has been paired successfully!\n\nYour session ID is: ${sessionId}\nPlease use this ID to authenticate future requests.`
-  })
-  .then(response => {
-    console.log(`Session ID sent to ${phone}`);
-  })
-  .catch(error => {
-    console.error('Error sending session ID to WhatsApp:', error);
-  });
-}
 
 // POST route to handle pairing requests and send pair code to WhatsApp
 app.post('/pair', (req, res) => {
@@ -63,7 +42,7 @@ app.post('/pair', (req, res) => {
   // Log pair code (for your internal use)
   console.log(`Pair code for ${phone}: ${pairCode}`);
 
-  // Send Pair Code to the user's WhatsApp using your Baileys bot or other WhatsApp API
+  // Send Pair Code to the user's WhatsApp using Twilio API
   sendPairCodeToWhatsApp(phone, pairCode);
 
   // Respond with the pair code
@@ -72,6 +51,22 @@ app.post('/pair', (req, res) => {
     <p>Scan QR or send this code via WhatsApp to our bot.</p>
   `);
 });
+
+// Function to send pair code to the user's WhatsApp via Twilio API
+function sendPairCodeToWhatsApp(phone, pairCode) {
+  client.messages
+    .create({
+      from: TWILIO_WHATSAPP_NUMBER,  // Twilio WhatsApp number
+      to: `whatsapp:${phone}`,  // Phone number in international format
+      body: `🔐 Your pairing code is: ${pairCode}\n\nPlease send this code back to complete the pairing process.`
+    })
+    .then(message => {
+      console.log(`Pair code sent to ${phone}`);
+    })
+    .catch(error => {
+      console.error('Error sending pair code to WhatsApp:', error);
+    });
+}
 
 // ✅ Simulated WhatsApp Bot callback (in real case, from webhook or bot)
 app.get('/whatsapp/callback/:pairCode', (req, res) => {
@@ -101,6 +96,22 @@ app.get('/whatsapp/callback/:pairCode', (req, res) => {
     sessionId: pairing.sessionId
   });
 });
+
+// Function to send session ID to the user's WhatsApp after pairing
+function sendSessionIdToWhatsApp(phone, sessionId) {
+  client.messages
+    .create({
+      from: TWILIO_WHATSAPP_NUMBER,  // Twilio WhatsApp number
+      to: `whatsapp:${phone}`,  // Phone number in international format
+      body: `✅ Your device has been paired successfully!\n\nYour session ID is: ${sessionId}\nPlease use this ID to authenticate future requests.`
+    })
+    .then(message => {
+      console.log(`Session ID sent to ${phone}`);
+    })
+    .catch(error => {
+      console.error('Error sending session ID to WhatsApp:', error);
+    });
+}
 
 // Start the server
 app.listen(PORT, () => {
