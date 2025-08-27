@@ -46,10 +46,21 @@ app.get('/whatsapp/callback/:pairCode', (req, res) => {
   const pairing = pairings[pairCode];
 
   if (!pairing) {
-    return res.status(404).send('Invalid pair code.');
+    return res.status(404).json({ error: 'Invalid pair code' });
+  }
+
+  if (pairing.paired) {
+    return res.status(400).json({ error: 'Code already used' });
   }
 
   pairing.paired = true;
+
+  res.json({
+    message: `Paired with phone ${pairing.phone}`,
+    sessionId: pairing.sessionId
+  });
+});
+
 
   // Simulate sending session ID via WhatsApp
   console.log(`✅ Sending session ID to ${pairing.phone}: ${pairing.sessionId}`);
