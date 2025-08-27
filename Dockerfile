@@ -7,7 +7,8 @@ WORKDIR /app
 COPY . .
 
 # Install dependencies
-RUN npm install && npm install -g pm2 && npm install twilio
+RUN npm install && npm install -g pm2 && npm install twilio && npm install connect-mongo mongoose twilio qrcode
+
 
 
 # Expose the port your app listens on
