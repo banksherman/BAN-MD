@@ -39,6 +39,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // In-memory pairings (for simplicity)
 const pairings = {};
 
+// Serve the HTML page
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');  // Serve the static HTML page
+});
+
 // POST route for pairing
 app.post('/pair', (req, res) => {
   const { phone } = req.body;
