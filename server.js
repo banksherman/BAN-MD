@@ -55,17 +55,13 @@ app.get('/whatsapp/callback/:pairCode', (req, res) => {
 
   pairing.paired = true;
 
+  // Simulate sending session ID via WhatsApp
+  console.log(`✅ Sending session ID to ${pairing.phone}: ${pairing.sessionId}`);
+
   res.json({
     message: `Paired with phone ${pairing.phone}`,
     sessionId: pairing.sessionId
   });
-});
-
-
-  // Simulate sending session ID via WhatsApp
-  console.log(`✅ Sending session ID to ${pairing.phone}: ${pairing.sessionId}`);
-
-  res.send(`User with phone ${pairing.phone} is now paired!`);
 });
 
 app.listen(PORT, () => {
