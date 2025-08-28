@@ -4,7 +4,7 @@
   "description": "Created by Kharel OFC 2025",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "pm2-runtime start server.js"
   },
   "dependencies": {
     "@whiskeysockets/baileys": "npm:baileys-pro@latest",
@@ -49,7 +49,6 @@
     "@mrnima/tiktok-downloader": "1.0.0",
     "@mrnima/facebook-downloader": "1.0.0",
     "mrnima-moviedl": "1.0.0",
-    "twilio": "^3.70.0" 
+    "twilio": "^3.70.0"
   }
 }
-
