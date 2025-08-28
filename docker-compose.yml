@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  pairing-app:
+    build: .
+    container_name: pairing-app
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./session:/app/session   # ✅ Persist WhatsApp Web session
+      - ./logs:/app/logs         # (optional) store logs outside container
+    environment:
+      - NODE_ENV=production
+      - PORT=9090
+      # you can move secrets here instead of hardcoding:
+      - TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      - TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      - TWILIO_PHONE=whatsapp:+15315354361
