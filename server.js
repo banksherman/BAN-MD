@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
 const twilio = require('twilio');
-const { Client, LocalAuth } = require('whatsapp-web.js');  // ✅ Use LocalAuth for persistence
+const { Client, LocalAuth } = require('whatsapp-web.js');  // ✅ WhatsApp Web client with LocalAuth
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,7 +14,7 @@ const accountSid = 'AC3e71cf33c152e10187637ef5bc0284c7';
 const authToken = 'b7f18ae12453ed9332563c21f4b5397e';    
 const twilioPhone = 'whatsapp:+15315354361';             
 
-// ✅ Session setup (memory only, just for Express sessions)
+// ✅ Session setup (memory only for web pairing codes)
 app.use(session({
   secret: 'pairing-secret',
   resave: false,
@@ -53,21 +53,3 @@ app.post('/pair', (req, res) => {
       <h3>Pair Code: ${pairCode}</h3>
       <img src="${qrCodeUrl}" alt="Scan to Pair" />
       <p>Scan the QR code or send the pair code to our WhatsApp bot.</p>
-      <footer>
-        <p>&copy; 2025 BANKS OFC KHAREL</p>
-      </footer>
-    `);
-  });
-});
-
-function sendPairCodeToWhatsApp(phone, pairCode) {
-  const client = twilio(accountSid, authToken);
-  client.messages
-    .create({
-      from: twilioPhone,
-      body: `🔐 Your pairing code is: ${pairCode}\n\nPlease send this code back to complete the pairing process.`,
-      to: `whatsapp:${phone}`
-    })
-    .then(() => console.log(`Pair code sent to
-
-});
