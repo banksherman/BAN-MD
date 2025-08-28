@@ -10,7 +10,7 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install && \
     npm install -g pm2 && \
-    npm install twilio connect-mongo mongoose qrcode
+    npm install twilio qrcode
 
 # Copy the rest of the application files to the container
 COPY . .
