@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
 const twilio = require('twilio');
-const { Client } = require('whatsapp-web.js');  // ✅ Added WhatsApp Web client
+const { Client } = require('whatsapp-web.js');  // ✅ WhatsApp Web client
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,7 +14,7 @@ const accountSid = 'AC3e71cf33c152e10187637ef5bc0284c7';
 const authToken = 'b7f18ae12453ed9332563c21f4b5397e';    
 const twilioPhone = 'whatsapp:+15315354361';             
 
-// ✅ Session setup (in-memory only)
+// ✅ Session setup (memory only)
 app.use(session({
   secret: 'pairing-secret',
   resave: false,
@@ -111,7 +111,7 @@ const waClient = new Client();
 
 waClient.on('qr', async (qr) => {
   console.log('QR RECEIVED', qr);
-  latestQR = await QRCode.toDataURL(qr); // turn real WhatsApp QR into image
+  latestQR = await QRCode.toDataURL(qr); // convert QR string to image
 });
 
 waClient.on('ready', () => {
