@@ -1,34 +1,10 @@
-# Use the official Node.js LTS image as the base image
+# Use official Node.js LTS as base
 FROM node:lts-buster
 
-# Install system dependencies required by puppeteer/whatsapp-web.js
-RUN apt-get update && apt-get install -y \
-    wget \
-    ca-certificates \
-    fonts-liberation \
-    libappindicator3-1 \
-    libasound2 \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libcups2 \
-    libdbus-1-3 \
-    libgdk-pixbuf2.0-0 \
-    libnspr4 \
-    libnss3 \
-    libx11-xcb1 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxfixes3 \
-    libxrandr2 \
-    xdg-utils \
-    libgbm-dev \
-    libu2f-udev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set the working directory inside the container
+# Set working directory inside container
 WORKDIR /app
 
-# Copy package.json and package-lock.json first (for caching)
+# Copy package.json first (for caching layers)
 COPY package*.json ./
 
 # Install dependencies
@@ -36,11 +12,18 @@ RUN npm install && \
     npm install -g pm2 && \
     npm install twilio qrcode whatsapp-web.js
 
-# Copy the rest of the application files to the container
+# Copy app source code
 COPY . .
 
-# Expose the port your app listens on
+# ✅ Make sure session folder exists & writable
+RUN mkdir -p /app/session && chmod -R 777 /app/session
+
+# Expose app port
 EXPOSE 9090
 
-# Start the app with PM2
+# ✅ Persist WhatsApp Web session outside container
+VOLUME [ "/app/session" ]
+
+# Start with PM2
 CMD ["pm2-runtime", "start", "server.js"]
+
