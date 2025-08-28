@@ -4,16 +4,17 @@ const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
 const twilio = require('twilio');
+const { Client } = require('whatsapp-web.js');  // ✅ Added WhatsApp Web client
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Twilio Credentials
-const accountSid = 'AC3e71cf33c152e10187637ef5bc0284c7';  // Your Account SID
-const authToken = 'b7f18ae12453ed9332563c21f4b5397e';    // Your Auth Token
-const twilioPhone = 'whatsapp:+15315354361';             // Your Twilio WhatsApp-enabled number
+const accountSid = 'AC3e71cf33c152e10187637ef5bc0284c7';  
+const authToken = 'b7f18ae12453ed9332563c21f4b5397e';    
+const twilioPhone = 'whatsapp:+15315354361';             
 
-// ✅ Session setup (no Mongo, just memory)
+// ✅ Session setup (in-memory only)
 app.use(session({
   secret: 'pairing-secret',
   resave: false,
@@ -24,23 +25,21 @@ app.use(session({
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// In-memory pairings (simple, not persisted)
+// In-memory pairings
 const pairings = {};
 
-// POST route for pairing
+// ---------------- Twilio Pairing Flow ----------------
 app.post('/pair', (req, res) => {
   const { phone } = req.body;
-  const pairCode = uuidv4();  // Generate unique pair code
-  const sessionId = uuidv4(); // Generate session ID
+  const pairCode = uuidv4();
+  const sessionId = uuidv4();
 
-  // Save pairing information
   pairings[pairCode] = {
     phone,
     sessionId,
     paired: false
   };
 
-  // Generate QR Code URL
   const pairingUrl = `https://pairing-app-ut40.onrender.com/whatsapp/callback/${pairCode}`;
   QRCode.toDataURL(pairingUrl, (err, qrCodeUrl) => {
     if (err) {
@@ -48,10 +47,8 @@ app.post('/pair', (req, res) => {
       return res.status(500).send('Error generating QR code');
     }
 
-    // Send Pair Code to WhatsApp
     sendPairCodeToWhatsApp(phone, pairCode);
 
-    // Respond with Pair Code and QR Code
     res.send(`
       <h3>Pair Code: ${pairCode}</h3>
       <img src="${qrCodeUrl}" alt="Scan to Pair" />
@@ -63,10 +60,8 @@ app.post('/pair', (req, res) => {
   });
 });
 
-// Function to send Pair Code to WhatsApp
 function sendPairCodeToWhatsApp(phone, pairCode) {
   const client = twilio(accountSid, authToken);
-
   client.messages
     .create({
       from: twilioPhone,
@@ -77,7 +72,6 @@ function sendPairCodeToWhatsApp(phone, pairCode) {
     .catch(error => console.error('Error sending pair code to WhatsApp:', error));
 }
 
-// WhatsApp Bot callback (simulate pairing)
 app.get('/whatsapp/callback/:pairCode', (req, res) => {
   const { pairCode } = req.params;
   const pairing = pairings[pairCode];
@@ -90,23 +84,17 @@ app.get('/whatsapp/callback/:pairCode', (req, res) => {
     return res.status(400).json({ error: 'Code already used' });
   }
 
-  // Mark as paired
   pairing.paired = true;
-
-  // Send session ID to WhatsApp
   sendSessionIdToWhatsApp(pairing.phone, pairing.sessionId);
 
-  // Return session ID in response
   res.json({
     message: `Paired with phone ${pairing.phone}`,
     sessionId: pairing.sessionId
   });
 });
 
-// Function to send Session ID to WhatsApp
 function sendSessionIdToWhatsApp(phone, sessionId) {
   const client = twilio(accountSid, authToken);
-
   client.messages
     .create({
       from: twilioPhone,
@@ -117,8 +105,28 @@ function sendSessionIdToWhatsApp(phone, sessionId) {
     .catch(error => console.error('Error sending session ID to WhatsApp:', error));
 }
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// ---------------- WhatsApp Web Login via QR ----------------
+let latestQR = null;
+const waClient = new Client();
+
+waClient.on('qr', async (qr) => {
+  console.log('QR RECEIVED', qr);
+  latestQR = await QRCode.toDataURL(qr); // turn real WhatsApp QR into image
 });
 
+waClient.on('ready', () => {
+  console.log('✅ WhatsApp Web client is ready!');
+});
+
+waClient.initialize();
+
+// Route to show WhatsApp Web QR
+app.get('/qr', (req, res) => {
+  if (!latestQR) return res.send('QR not yet generated. Please wait...');
+  res.send(`<h2>Scan this QR with WhatsApp (Linked Devices)</h2><img src="${latestQR}" />`);
+});
+
+// ---------------- Start server ----------------
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
