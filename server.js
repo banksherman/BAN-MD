@@ -1,14 +1,10 @@
 const express = require('express');
 const session = require('express-session');
-const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
-const axios = require('axios'); 
+const axios = require('axios');
 const QRCode = require('qrcode');
 const twilio = require('twilio');
-
-// MongoDB URI (replace with your own URI)
-const mongoURI = 'mongodb+srv://herman:kharel075@cluster0.q860v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 // Twilio Credentials
 const accountSid = 'AC3e71cf33c152e10187637ef5bc0284c7';  // Your Account SID
@@ -18,18 +14,11 @@ const twilioPhone = 'whatsapp:+15315354361';  // Your Twilio WhatsApp-enabled nu
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// MongoDB Connection
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch(err => console.log('MongoDB connection error:', err));
-
-// Session Store Setup with MongoDB
-const MongoStore = require('connect-mongo');
+// Session Store Setup (using MemoryStore)
 app.use(session({
   secret: 'pairing-secret',
-  store: MongoStore.create({ mongoUrl: mongoURI }),
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
 }));
 
 // Middleware
@@ -38,11 +27,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // In-memory pairings (for simplicity)
 const pairings = {};
-
-// Serve the HTML page
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');  // Serve the static HTML page
-});
 
 // POST route for pairing
 app.post('/pair', (req, res) => {
@@ -127,14 +111,4 @@ function sendSessionIdToWhatsApp(phone, sessionId) {
   client.messages
     .create({
       from: twilioPhone, // Your Twilio WhatsApp number
-      body: `✅ Your device has been paired successfully!\n\nYour session ID is: ${sessionId}\nPlease use this ID to authenticate future requests.`,
-      to: `whatsapp:${phone}` // The recipient's WhatsApp number
-    })
-    .then(message => console.log(`Session ID sent to ${phone}`))
-    .catch(error => console.error('Error sending session ID to WhatsApp:', error));
-}
-
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+      body: `✅ Your device has been paired successfully!\n\nYour session ID
